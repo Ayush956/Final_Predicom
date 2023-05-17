@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 import numpy as np
 from login.views import f
+from login.models import Car,Laptop,Mobile
 
 def home(request):
     name = f(request)
@@ -51,10 +52,19 @@ def car(request):
         pred = round(pred[0])
         isActive = True
     
-
+        dic_car = Car.objects.all().values()
+        m = {}
+        for i in dic_car:
+            m[abs(i["car_price"]-pred)] = i
+    
+        lis = sorted(list(m.keys()))
+        new_m= []
+        for i in range(3):
+            new_m.append(m[lis[i]])
         d = {
             "pred":pred,
-            "isActive":isActive
+            "isActive":isActive,
+            'new_m':new_m
         }
     
     return render(request,"products/car.html",d)
@@ -87,10 +97,20 @@ def mobile(request):
         pred=pred*72
         isActive = True
     
+        dic_mobile = Mobile.objects.all().values()
+        m = {}
+        for i in dic_mobile:
+            m[abs(i["mobile_price"]-pred)] = i
+    
+        lis = sorted(list(m.keys()))
+        new_m= []
+        for i in range(3):
+            new_m.append(m[lis[i]])
 
         d = {
             "pred":pred,
-            "isActive":isActive
+            "isActive":isActive,
+            'new_m':new_m
         }
     return render(request,"products/mobile.html",d)
 
@@ -160,11 +180,21 @@ def laptop(request):
         pred = model.predict(np.array([var1,var2,var3,var4,var5,var6,var7]).reshape(1,-1))
         pred = round(pred[0])
         isActive = True
+
+        dic_laptop = Laptop.objects.all().values()
+        m = {}
+        for i in dic_laptop:
+            m[abs(i["laptop_price"]-pred)] = i
     
+        lis = sorted(list(m.keys()))
+        new_m= []
+        for i in range(3):
+            new_m.append(m[lis[i]])
 
         d = {
             "pred":pred,
-            "isActive":isActive
+            "isActive":isActive,
+            'new_m':new_m
         }
     return render(request,"products/laptop.html",d)
 
